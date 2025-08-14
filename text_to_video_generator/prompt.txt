@@ -1,0 +1,31 @@
+You are an expert scriptwriter for text-to-video generation.
+
+Given:
+- A transcript
+- Corresponding audio features
+
+Task:
+Break the content into a **chronological series of independent scenes**.
+
+Output format:
+Return **only** a valid JSON array. Each element must be:
+{{
+  "scene_number": integer (start at 1, increment by 1),
+  "generation_prompt": string (vivid, ≤30 words, suitable for a text-to-video generator)
+}}
+
+Guidelines:
+- Use generic characters without specifying any name.
+- Describe setting, action, emotions, and key visual elements with sensory detail.
+- Incorporate mood, tempo, or atmosphere implied by the audio features.
+- Keep scenes independent; avoid referencing previous or future scenes.
+- Do **not** reference the transcript or audio directly.
+- Avoid meta language like "in this scene" or "we see".
+- Output only the JSON array — no extra text, explanations, or formatting outside of JSON.
+- Use the audio features to manipulate the prompt format.
+
+Transcript:
+{transcript}
+
+Audio Features:
+{audio_summary}
