@@ -13,7 +13,7 @@ import gradio as gr
 sys.path.insert(0, os.path.sep.join(os.path.realpath(__file__).split(os.path.sep)[:-3]))
 from vace.models.wan.wan_vace import WanVace, WanVaceMP
 from vace.models.wan.configs import WAN_CONFIGS, SIZE_CONFIGS
-
+from audio_to_video import generate_prompt_from_audio_input
 
 class FixedSizeQueue:
     def __init__(self, max_size):
@@ -205,20 +205,26 @@ class VACEInference:
 
 
     def generate(self, output_gallery, input_audio, src_video, src_mask, src_ref_image_1, src_ref_image_2, src_ref_image_3, prompt, negative_prompt, shift_scale, sample_steps, context_scale, guide_scale, infer_seed, output_height, output_width, frame_rate, num_frames):
-        output_height, output_width, frame_rate, num_frames = int(output_height), int(output_width), int(frame_rate), int(num_frames)
 
+        output_height = int(output_height) if output_height is not None else 480
+        output_width = int(output_width) if output_width is not None else 832
+        frame_rate = int(frame_rate) if frame_rate is not None else 16
+        num_frames = int(num_frames) if num_frames is not None else 81
+
+#        output_height, output_width, frame_rate, num_frames = int(output_height), int(output_width), int(frame_rate), int(num_frames)
 
         src_ref_images = [x for x in [src_ref_image_1, src_ref_image_2, src_ref_image_3] if
                           x is not None]
 
-
-        src_video, src_mask, src_ref_images = self.pipe.prepare_source([src_video],
-                                                                         [src_mask],
-                                                                         [src_ref_images],
-                                                                         num_frames=num_frames,
-                                                                         image_size=SIZE_CONFIGS[f"{output_width}*{output_height}"],
-                                                                         device=self.pipe.device)
-
+        if input_audio:
+            prompt = generate_prompt_from_audio_input(input_audio)
+        else:
+            src_video, src_mask, src_ref_images = self.pipe.prepare_source([src_video],
+                                                                            [src_mask],
+                                                                            [src_ref_images],
+                                                                            num_frames=num_frames,
+                                                                            image_size=SIZE_CONFIGS[f"{output_width}*{output_height}"],
+                                                                            device=self.pipe.device)
 
         video = self.pipe.generate(
             prompt,
@@ -254,7 +260,7 @@ class VACEInference:
             return [video_path]
 
     def set_callbacks(self, **kwargs):
-        self.gen_inputs = [self.output_gallery, self.src_video, self.src_mask, self.src_ref_image_1, self.src_ref_image_2, self.src_ref_image_3, self.prompt, self.negative_prompt, self.shift_scale, self.sample_steps, self.context_scale, self.guide_scale, self.infer_seed, self.output_height, self.output_width, self.frame_rate, self.num_frames]
+        self.gen_inputs = [self.output_gallery, self.input_audio, self.src_video, self.src_mask, self.src_ref_image_1, self.src_ref_image_2, self.src_ref_image_3, self.prompt, self.negative_prompt, self.shift_scale, self.sample_steps, self.context_scale, self.guide_scale, self.infer_seed, self.output_height, self.output_width, self.frame_rate, self.num_frames]
         self.gen_outputs = [self.output_gallery]
         self.generate_button.click(self.generate,
                                    inputs=self.gen_inputs,
