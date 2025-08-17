@@ -206,6 +206,8 @@ class VACEInference:
 
     def generate(self, output_gallery, input_audio, src_video, src_mask, src_ref_image_1, src_ref_image_2, src_ref_image_3, prompt, negative_prompt, shift_scale, sample_steps, context_scale, guide_scale, infer_seed, output_height, output_width, frame_rate, num_frames):
 
+        self.pipe.device = "cuda" if torch.cuda.is_available() else "cpu"
+
         output_height = int(output_height) if output_height is not None else 480
         output_width = int(output_width) if output_width is not None else 832
         frame_rate = int(frame_rate) if frame_rate is not None else 16
@@ -217,14 +219,16 @@ class VACEInference:
                           x is not None]
 
         if input_audio:
-            prompt = generate_prompt_from_audio_input(input_audio)
-        else:
-            src_video, src_mask, src_ref_images = self.pipe.prepare_source([src_video],
+            scenes = generate_prompt_from_audio_input(input_audio)
+            prompt = " ".join(scenes)
+            print(prompt)
+      
+        src_video, src_mask, src_ref_images = self.pipe.prepare_source([src_video],
                                                                             [src_mask],
                                                                             [src_ref_images],
                                                                             num_frames=num_frames,
                                                                             image_size=SIZE_CONFIGS[f"{output_width}*{output_height}"],
-                                                                            device=self.pipe.device)
+                                                                            device=self.pipe.device)    
 
         video = self.pipe.generate(
             prompt,
