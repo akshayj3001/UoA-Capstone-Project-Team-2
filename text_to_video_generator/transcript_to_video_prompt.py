@@ -12,6 +12,8 @@ Version: v1.0
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import logging
 import os
+import re
+import json
 
 from LambdaException import LambdaException
 
@@ -94,7 +96,12 @@ def generate_video_prompt(transcript, audio_features):
 
         log.info(f"Generated video prompt: \n{video_prompt}")
 
-        return video_prompt
+        match = re.search(r"\[.*\]", video_prompt, re.DOTALL)
+
+        if match:
+            json_str = match.group(0)   # Extracted JSON string
+
+        return match
 
     except Exception as excp:
         log.error(f"Error occurred in prompt generation: {str(excp)}")
