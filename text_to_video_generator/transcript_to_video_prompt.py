@@ -101,7 +101,7 @@ def generate_video_prompt(transcript, audio_features):
         if match:
             json_str = match.group(0)   # Extracted JSON string
 
-        return match
+        return json_str
 
     except Exception as excp:
         log.error(f"Error occurred in prompt generation: {str(excp)}")
