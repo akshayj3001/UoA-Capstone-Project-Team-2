@@ -32,6 +32,8 @@ import html
 from moviepy import VideoFileClip, concatenate_videoclips
 import argparse
 
+from transcript_to_video_prompt import generate_video_prompt
+
 
 # Automatically select device (MPS for Mac, else CPU)
 device = "mps" if torch.backends.mps.is_available() else "cpu"
@@ -226,6 +228,20 @@ def generate_prompt_from_audio_input(input_file):
 
     # Step 2: Summarize using BART with audio features
     story = summarize_with_google_flan_with_chunking(transcript, audio_features)
+    print("\nGenerated Story:\n", story)
+
+    return story
+
+def generate_scene_wise_prompt_from_audio_input(input_file):
+    audio_file_path = input_file  # Use input_file argument 
+
+    # Step 1: Transcribe and extract features
+    transcript, audio_features = transcribe_and_extract_features(audio_file_path)
+    print("Transcript:\n", transcript)
+    print("Audio Features:\n", audio_features)   
+
+    # Step 2: Summarize using BART with audio features
+    story = generate_video_prompt(transcript, audio_features)
     print("\nGenerated Story:\n", story)
 
     return story

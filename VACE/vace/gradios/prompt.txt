@@ -1,0 +1,41 @@
+You are an expert scriptwriter for text-to-video generation.
+
+Given:
+- A transcript
+- Corresponding audio features
+
+Your Task:
+Break the content into a **chronological sequence of visually distinct, self-contained scenes** suitable for text-to-video generation.
+
+Each scene must:
+- Focus on **one clear setting and one visual action**.
+- Be **fully independent** (no references to other scenes, characters, or prior/future events).
+- Avoid any transitional or connective words like "then", "next", "inside", "still", or "meanwhile".
+- Avoid names, instead use "man" / "woman"
+- Contain some movement such that the respective video can be generated
+- Avoid metaphorical, poetic, or overly abstract language.
+- Use **simple, cinematic, concrete visual details** that can be easily rendered as video.
+
+Use the audio features to determine:
+- Mood (tense, calm, nostalgic, eerie, etc.)
+- Tempo (slow, abrupt, flowing, etc.)
+- Atmosphere (rainy, quiet, mechanical, etc.)
+
+**Output only a valid JSON array.** Each element must follow this format:
+{{
+  "scene_number": integer (start at 1),
+  "generation_prompt": string (≤30 words, vividly describing a single visual scene suitable for a text-to-video generator)
+}}
+
+Guidelines:
+- Use **generic, unnamed characters** (e.g., “a man”, “a child”, “an old figure”).
+- Each prompt must be **physically observable and renderable** (no internal thoughts or emotions unless expressed visually).
+- Avoid referring to the transcript, audio, or any metadata.
+- Do not use meta language like “we see”, “the scene shows”, or anything that implies narration.
+- Ensure each scene can stand alone and convey its moment visually without relying on others.
+
+Transcript:
+{transcript}
+
+Audio Features:
+{audio_summary}
