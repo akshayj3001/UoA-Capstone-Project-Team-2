@@ -32,9 +32,7 @@ import html
 from moviepy import VideoFileClip, concatenate_videoclips
 import argparse
 import requests
-import json
 
-from transcript_to_video_prompt import generate_video_prompt
 
 
 # Automatically select device (MPS for Mac, else CPU)
