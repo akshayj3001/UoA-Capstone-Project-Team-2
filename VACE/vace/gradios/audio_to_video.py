@@ -35,6 +35,7 @@ import requests
 import json
 
 from transcript_to_video_prompt import generate_video_prompt
+from scene_by_scene_generator import generate_scenes_summary
 
 
 # Automatically select device (MPS for Mac, else CPU)
@@ -249,6 +250,20 @@ def generate_scene_wise_prompt_from_audio_input(input_file):
 
     # Step 2: Summarize using BART with audio features
     story = requests.post("http://127.0.0.1:8000/gpt-oss", json=payload).json()
+    print("\nGenerated Story:\n", story)
+
+    return story
+
+def generate_scene_wise_story_prompt_from_audio_input(input_file):
+    audio_file_path = input_file  # Use input_file argument 
+
+    # Step 1: Transcribe and extract features
+    transcript, audio_features = transcribe_and_extract_features(audio_file_path)
+    print("Transcript:\n", transcript)
+    print("Audio Features:\n", audio_features)   
+
+    # Step 2: Summarize using BART with audio features
+    story = generate_scenes_summary(transcript, audio_features)
     print("\nGenerated Story:\n", story)
 
     return story
