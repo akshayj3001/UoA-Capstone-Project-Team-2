@@ -31,6 +31,8 @@ import re
 import html
 from moviepy import VideoFileClip, concatenate_videoclips
 import argparse
+import requests
+import json
 
 from transcript_to_video_prompt import generate_video_prompt
 
@@ -240,8 +242,13 @@ def generate_scene_wise_prompt_from_audio_input(input_file):
     print("Transcript:\n", transcript)
     print("Audio Features:\n", audio_features)   
 
+    payload = {
+        "transcript": transcript,
+        "audio_features": audio_features
+    }
+
     # Step 2: Summarize using BART with audio features
-    story = generate_video_prompt(transcript, audio_features)
+    story = requests.post("http://127.0.0.1:8000/gpt-oss", json=payload).json()
     print("\nGenerated Story:\n", story)
 
     return story
