@@ -318,7 +318,7 @@ if __name__ == '__main__':
         infer_gr.create_ui()
         infer_gr.set_callbacks()
         allowed_paths = [args.save_dir]
-        demo.queue(status_update_rate=1).launch(server_name=args.server_name,
+        demo.queue(status_update_rate=1).launch(share=True, server_name=args.server_name,
                                                 server_port=args.server_port,
                                                 root_path=args.root_path,
                                                 allowed_paths=allowed_paths,
